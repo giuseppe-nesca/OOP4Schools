@@ -1,9 +1,12 @@
 package schools;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import jdk.nashorn.internal.runtime.Scope;
 
 // Hint: to write compact stream expressions
 // you can include the following
@@ -13,46 +16,67 @@ import java.util.Map;
 
 public class Region {
 	
+	private String name;
+	private Collection<Community> communities = new ArrayList<Community>();
+	private Collection<Municipality> municipalities = new ArrayList<Municipality>();
+	private Collection<School> schools = new ArrayList<School>();
+	
 	public Region(String name){
+		this.name = name;
 	}
 	
 	public String getName(){
-		return null;
+		return name;
 	}
 	
 	public Collection<School> getSchools() {
-		return null;
+		return schools;
 	}
 	
 	public Collection<Community> getCommunities() {
-		return null;
+		return communities;
 	}
 	
 	public Collection<Municipality> getMunicipalies() {
-		return null;
+		return municipalities;
 	}
 	
 	
 	// factory methods
 	
+	// definisce una nuova comunità è la ritorna
 	public Community newCommunity(String name, Community.Type type){
-		return null;
+		Community community = new Community(name, type);
+		communities.add(community);
+		return community;
 	}
 
+	/*
+	 * Definizione di un nuovo comune. due versioni: 
+	 * con comunità
+	 * senza comunità
+	 */
 	public Municipality newMunicipality(String nome, String provincia){
-		return null;
+		Municipality municipality = new Municipality(nome, provincia);
+		municipalities.add(municipality);
+		return municipality;
 	}
 	public Municipality newMunicipality(String nome, String provincia, Community comunita){
-		return null;
+		Municipality municipality = new Municipality(nome, provincia, comunita);
+		municipalities.add(municipality);
+		return municipality;
 	}
 	
+	//
 	public School newSchool(String name, String code, int grade, String description){
-		return null;
+		School school = new School(name, code, grade, description);
+		schools.add(school);
+		return school;
 	}
 	
 	public Branch newBranch(int regionalCode, Municipality municipality, 
 							String address, int zipCode, School school)	{
-		return null;
+		return new Branch(regionalCode, municipality, address, zipCode, school);
 	}
 	
 	public void readData(String url) throws IOException{

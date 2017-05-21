@@ -1,21 +1,36 @@
 package schools;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Community {
 	
 	public enum Type { MONTANA, COLLINARE };
+	private String name;
+	private Type type;
+	private Collection<Municipality> municipalities = new ArrayList<>();
+	
+	public Community(String name, Community.Type type){
+		this.type = type;
+		this.name = name;
+	}
 	
 	public String getName() {
-		return null;
+		return name;
 	}
 	
 	public Type getType(){
-		return null;
+		return type;
 	}
 
 	public Collection<Municipality> getMunicipalities() {
-		return null;
+		return municipalities;
 	}
 	
+	public Community addMunicipality(Municipality municipality){
+		this.municipalities.add(municipality);
+		return this;
+	}
 }

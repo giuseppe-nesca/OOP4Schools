@@ -2,24 +2,39 @@ package schools;
 
 public class Branch {
 	
+	int regionalCode;
+	Municipality municipality; 
+	String address;
+	int zipCode;
+	School school;
+	
+	public Branch(int regionalCode, Municipality municipality, String address,
+			int zipCode, School school) {
+		this.regionalCode = regionalCode;
+		this.municipality = municipality;
+		this.address = address;
+		this.zipCode = zipCode;
+		this.school = school.addBranch(this);
+	}
+	
 	public int getCode() {
-		return -1;
+		return regionalCode;
 	}
 	
 	public String getAddress() {
-		return null;
+		return address;
 	}
 	
 	public int getCAP() {
-		return -1;
+		return zipCode;
 	}
 
 	public Municipality getMunicipality(){
-		return null;
+		return municipality;
 	}
 
 	public School getSchool(){
-		return null;
+		return school;
 	}
 
 }
