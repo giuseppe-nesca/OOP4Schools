@@ -8,14 +8,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.HashSet;
+import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXBException;
 
 import org.xml.sax.SAXException;
 
 import com.sun.javafx.scene.control.skin.FXVK.Type;
+import com.sun.org.apache.xerces.internal.impl.dtd.models.CMAny;
 import com.sun.xml.internal.bind.v2.runtime.reflect.ListIterator;
 
 import jdk.nashorn.internal.runtime.Scope;
@@ -106,35 +109,56 @@ public class Region {
 		assert iter.next() == "Provincia,Comune,Grado Scolastico,Descrizione,Cod Sede,Cod Scuola,Denominazione,Indirizzo,C.A.P.,Comunita Collinare,Comunita Montana";
 		iter.next();
 		while(iter.hasNext()){
-			String[] infos = iter.next().split(",");
-			String[] infoschool = infos[2].split("-");
+			/*String[] infos = iter.next().split(",");
+			//String[] infoschool = infos[2].split("-");
 			String provincia = infos[0], comune = infos[1]; //municipality
-			String gradoScolastico = infoschool[0], Descrizione = infoschool[1]; //school
-			String codSede = infos[3]; //branch
-			String codScuola = infos[4], denominazione = infos[5]; //school
-			String indirizzo = infos[6], zipCode = infos[7]; //branch
-			String comunitaCollinare = infos[8] , comunitaMontana = infos[9]; //community
+			//String gradoScolastico = infoschool[0], Descrizione = infoschool[1]; //school
+			String gradoScolastico = infos[2] , descrizione = infos[3];
+			String codSede = infos[4]; //branch
+			String codScuola = infos[5], denominazione = infos[6]; //school
+			String indirizzo = infos[7], zipCode = infos[8]; //branch
+			Optional<String> comunitaCollinare = Optional.ofNullable(infos[9]) , comunitaMontana = Optional.ofNullable(infos[10]); //community
 			
 			Community community;
 			Municipality municipality;
 			School school;
 			Branch branch;
-			if(comunitaCollinare != ""){
-				community = newCommunity(comunitaCollinare, Community.Type.COLLINARE);
+			if(comunitaCollinare.isPresent()){
+				community = newCommunity(comunitaCollinare.get(), Community.Type.COLLINARE);
 				municipality = newMunicipality(comune, provincia,community);
 				branch = newBranch(new Integer(codSede), municipality, indirizzo, new Integer(zipCode), 
-						newSchool(denominazione, codScuola, new Integer(gradoScolastico), Descrizione));
-			}else if(comunitaMontana != ""){
-				community = newCommunity(comunitaMontana, Community.Type.MONTANA);
+						newSchool(denominazione, codScuola, new Integer(gradoScolastico), descrizione));
+			}else if(comunitaMontana.isPresent()){
+				community = newCommunity(comunitaMontana.get(), Community.Type.MONTANA);
 				branch = newBranch(new Integer(codSede), newMunicipality(comune, provincia,community), indirizzo, new Integer(zipCode), 
-						newSchool(denominazione, codScuola, new Integer(gradoScolastico), Descrizione));
+						newSchool(denominazione, codScuola, new Integer(gradoScolastico), descrizione));
 			}else{
 				branch = newBranch(new Integer(codSede), newMunicipality(comune, provincia), indirizzo, new Integer(zipCode), 
-						newSchool(denominazione, codScuola, new Integer(gradoScolastico), Descrizione));
+						newSchool(denominazione, codScuola, new Integer(gradoScolastico), descrizione));
 			}
+			*/
+			String string = iter.next();
+			StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
+			String Provincia = stringTokenizer.nextToken();
+			String comune = stringTokenizer.nextToken();
+			String gradoScolastico = stringTokenizer.nextToken();
+			String descrizione = stringTokenizer.nextToken();
+			String codSede = stringTokenizer.nextToken();
+			String codScuola = stringTokenizer.nextToken();
+			String denominazione = stringTokenizer.nextToken();
+			String indirizzo = stringTokenizer.nextToken();
+			String zipCode = stringTokenizer.nextToken();
 			
-		
+			assert stringTokenizer.hasMoreElements();
+			String comunitaCollinare = stringTokenizer.nextToken("");
 			
+			String comunitaMontana;  
+			try{
+				comunitaMontana = stringTokenizer.nextToken("");
+				System.out.println("CM added!");
+			}catch(NoSuchElementException e){
+				comunitaMontana = null;
+			}
 		}
 		
 	}
