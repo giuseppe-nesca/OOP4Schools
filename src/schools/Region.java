@@ -139,9 +139,10 @@ public class Region {
 			*/
 			String string = iter.next();
 			StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
-			String Provincia = stringTokenizer.nextToken();
+			String provincia = stringTokenizer.nextToken();
 			String comune = stringTokenizer.nextToken();
 			String gradoScolastico = stringTokenizer.nextToken();
+			Integer grade = new Integer(new StringBuilder(gradoScolastico).charAt(0));
 			String descrizione = stringTokenizer.nextToken();
 			String codSede = stringTokenizer.nextToken();
 			String codScuola = stringTokenizer.nextToken();
@@ -149,17 +150,30 @@ public class Region {
 			String indirizzo = stringTokenizer.nextToken();
 			String zipCode = stringTokenizer.nextToken();
 			
+			//questi dati sono opzionali ovvero la liena importata potrebbe non contenerli
 			assert stringTokenizer.hasMoreElements();
-			String comunitaCollinare = stringTokenizer.nextToken("");
+			Community community;
+			Municipality municipality;
 			
+			String comunitaCollinare;
 			String comunitaMontana;  
-			try{
-				comunitaMontana = stringTokenizer.nextToken("");
-				System.out.println("CM added!");
-			}catch(NoSuchElementException e){
-				comunitaMontana = null;
+			String s = stringTokenizer.nextToken("");
+			if(!s.equals(",,")){
+				if(s.startsWith(",,")){
+					comunitaMontana = new StringBuilder(s).delete(0, 2).toString();
+					System.out.println("comunita montana =  "+ comunitaMontana);
+					community = newCommunity(comunitaMontana, Community.Type.MONTANA);
+				}else{
+					comunitaCollinare = new StringBuilder(s).deleteCharAt(0).reverse().deleteCharAt(0).reverse().toString();
+					System.out.println("comunita collinare = "+ comunitaCollinare);
+					community = newCommunity(comunitaCollinare, Community.Type.COLLINARE);
+				}
+				municipality = new Municipality(comune, provincia, community);
+			}else{
+				municipality = new Municipality(comune, provincia);
 			}
-		}
+			School school = new School(denominazione, codScuola, grade, descrizione);
+			}
 		
 	}
 
