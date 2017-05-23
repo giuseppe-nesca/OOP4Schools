@@ -2,6 +2,7 @@ package schools;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -10,7 +11,7 @@ public class Community {
 	public enum Type { MONTANA, COLLINARE };
 	private String name;
 	private Type type;
-	private Collection<Municipality> municipalities = new ArrayList<>();
+	private Collection<Municipality> municipalities = new HashSet<>();
 	
 	public Community(String name, Community.Type type){
 		this.type = type;

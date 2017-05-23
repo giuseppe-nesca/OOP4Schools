@@ -2,6 +2,7 @@ package schools;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class School {
 	
@@ -9,7 +10,7 @@ public class School {
 	private String code; 
 	private int grade; 
 	private String description;
-	private Collection<Branch> branches = new ArrayList<Branch>();
+	private Collection<Branch> branches = new HashSet<Branch>();
 
 	public School(String name, String code, int grade, String description) {
 		this.name = name;
