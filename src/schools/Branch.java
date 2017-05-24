@@ -11,7 +11,7 @@ public class Branch {
 	public Branch(int regionalCode, Municipality municipality, String address,
 			int zipCode, School school) {
 		this.regionalCode = regionalCode;
-		this.municipality = municipality;
+		this.municipality = municipality.addBranch(this);
 		this.address = address;
 		this.zipCode = zipCode;
 		this.school = school.addBranch(this);

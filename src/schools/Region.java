@@ -114,7 +114,7 @@ public class Region {
 			StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
 			String provincia = stringTokenizer.nextToken();
 			String comune = stringTokenizer.nextToken();
-			String gradoScolastico = stringTokenizer.nextToken();
+			String gradoScolastico = stringTokenizer.nextToken(); //comodo trasformarlo in Integer da subito
 			Integer grade = new Integer(new StringBuilder(gradoScolastico).charAt(0));
 			String descrizione = stringTokenizer.nextToken();
 			String codSede = stringTokenizer.nextToken();
@@ -154,18 +154,21 @@ public class Region {
 	// return map: key==school description, int: num school with the same description
 	public Map<String,Long>countSchoolsPerDescription(){
 		Map<String, Long> schoolTypes = schools.stream()
-				.collect(Collectors.groupingBy(School::getDescription, Collectors.counting()));
+				//.collect(Collectors.groupingBy(School::getDescription, Collectors.counting()));
+				.collect(Collectors.groupingBy((School s) -> s.getDescription(), Collectors.counting() ));
 		return schoolTypes;
 	}
 	// return map: key==municipalityName,  value: branchesNumber
 	public Map<String,Long>countBranchesPerMunicipality(){
 		Map<String, Long> municipalityBranches = municipalities.stream()
-				.collect(Collectors.groupingBy(Municipality::getName, Collectors.
-						mapping(Municipality::getBranches, Collectors.counting()))); //conto ibranches dentro la municipality
+				.collect(Collectors.groupingBy(Municipality::getName, 
+						Collectors.mapping(Municipality::getBranches, Collectors.counting()))); //conto ibranches dentro la municipality
 		return municipalityBranches;
 	}
 
 	public Map<String,Double>averageBranchesPerMunicipality(){
+		//Map<String,Long>municipalityBranchesAvarege = municipalities.stream()
+				
 		return null;
 	}
 
