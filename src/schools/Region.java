@@ -69,8 +69,16 @@ public class Region {
 	// definisce una nuova comunità è la ritorna
 	public Community newCommunity(String name, Community.Type type){
 		Community community = new Community(name, type);
-		communities.add(community);
-		return community;
+		boolean flag = communities.add(community);
+		if(flag)
+			return community;
+		else {
+			for(Community iter : communities){
+				if (iter.equals(community)) return iter;
+			}
+		}
+		System.err.println("error con newCommunity: return null");
+		return null;
 	}
 
 	/*
@@ -80,20 +88,44 @@ public class Region {
 	 */
 	public Municipality newMunicipality(String nome, String provincia){
 		Municipality municipality = new Municipality(nome, provincia);
-		municipalities.add(municipality);
-		return municipality;
-	}
+		boolean flag = municipalities.add(municipality);
+		if(flag)
+			return municipality;
+		else {
+			for(Municipality iter : municipalities){
+				if (iter.equals(municipality)) return iter;
+			}
+		}
+		System.err.println("error con newMunicipality: return null");
+		return null;
+	}	
 	public Municipality newMunicipality(String nome, String provincia, Community comunita){
 		Municipality municipality = new Municipality(nome, provincia, comunita);
-		municipalities.add(municipality);
-		return municipality;
+		boolean flag = municipalities.add(municipality);
+		if(flag)
+			return municipality;
+		else {
+			for(Municipality iter : municipalities){
+				if (iter.equals(municipality)) return iter;
+			}
+		}
+		System.err.println("error con newMunicipality: return null");
+		return null;
 	}
 	
 	//
 	public School newSchool(String name, String code, int grade, String description){
 		School school = new School(name, code, grade, description);
-		schools.add(school);
-		return school;
+		boolean flag = schools.add(school);
+		if (flag)
+			return school;
+		else {
+			for(School iter : schools){
+				if (iter.equals(school)) return iter;
+			}
+		}
+		System.err.println("error con newSchool: return null");
+		return null;
 	}
 	
 	public Branch newBranch(int regionalCode, Municipality municipality, 
