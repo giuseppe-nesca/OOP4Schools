@@ -2,11 +2,11 @@ package schools;
 
 public class Branch {
 	
-	int regionalCode;
-	Municipality municipality; 
-	String address;
-	int zipCode;
-	School school;
+	private int regionalCode;
+	private Municipality municipality; 
+	private String address;
+	private int zipCode;
+	private School school;
 	
 	public Branch(int regionalCode, Municipality municipality, String address,
 			int zipCode, School school) {
@@ -37,4 +37,13 @@ public class Branch {
 		return school;
 	}
 
+	@Override
+	public boolean equals(Object object){
+		return this.regionalCode == ((Branch) object).getCode();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getCode();
+	}
 }

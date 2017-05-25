@@ -1,5 +1,7 @@
 
 
+import java.util.stream.Stream;
+
 import schools.Branch;
 import schools.Community;
 import schools.Municipality;
@@ -38,6 +40,22 @@ public class Example {
 		r.readData(urlDatiPiemonte);
 		
 		System.out.println("Loaded " + r.getSchools().size() + " schools");
+		
+		//mine
+		
+		Long n = r.getSchools().stream().
+			map(School::getCode).
+			distinct()
+			.count()
+			;
+		System.out.println(n);
+		
+		r.getMunicipalies().stream()
+				.filter(m -> { return m.getName().compareTo("CAMBIANO")==0;})
+				.forEach( m -> { System.out.println(m.getBranches().size()); });
+				;
+		
+		//
 		
 		System.out.println("Numero scuole per descrizione");
 		r.countSchoolsPerDescription().forEach( (k,v) -> System.out.println(k + ":" + v));

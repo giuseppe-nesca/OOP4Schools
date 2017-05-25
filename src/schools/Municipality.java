@@ -44,4 +44,13 @@ public class Municipality {
 		return this;
 	}
 	
+	@Override
+	public boolean equals(Object object){
+		return this.nome.compareTo(((Municipality) object).getName()) == 0;
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getName().hashCode();
+	}
 }

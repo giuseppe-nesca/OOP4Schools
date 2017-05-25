@@ -34,4 +34,14 @@ public class Community {
 		this.municipalities.add(municipality);
 		return this;
 	}
+	
+	@Override
+	public boolean equals(Object object){
+		return this.name.compareTo(((Community) object).getName()) == 0;
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getName().hashCode();
+	}
 }

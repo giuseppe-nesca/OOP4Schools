@@ -43,5 +43,15 @@ public class School {
 		branches.add(branch);
 		return this;
 	}
+	
+	@Override
+	public boolean equals(Object object){
+		return this.code.compareTo(((School) object).getCode()) == 0;
+	}
+	
+	@Override
+	public int hashCode(){ 
+		return this.getCode().hashCode();
+		}
 
 }

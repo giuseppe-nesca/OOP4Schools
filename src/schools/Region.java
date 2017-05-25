@@ -160,9 +160,14 @@ public class Region {
 	}
 	// return map: key==municipalityName,  value: branchesNumber
 	public Map<String,Long>countBranchesPerMunicipality(){
-		Map<String, Long> municipalityBranches = municipalities.stream()
+		/*Map<String, Long> municipalityBranches = municipalities.stream()
 				.collect(Collectors.groupingBy(Municipality::getName, 
 						Collectors.mapping(Municipality::getBranches, Collectors.counting()))); //conto ibranches dentro la municipality
+		return municipalityBranches;*/
+		Map<String,Long> municipalityBranches = new HashMap<String, Long>();
+				municipalities.forEach(s-> {
+			municipalityBranches.put(s.getName(),(long) s.getBranches().size());
+		});
 		return municipalityBranches;
 	}
 
