@@ -46,11 +46,22 @@ public class Municipality {
 	
 	@Override
 	public boolean equals(Object object){
-		return this.nome.compareTo(((Municipality) object).getName()) == 0;
+		//return this.nome.compareTo(((Municipality) object).getName()) == 0;
+		if ( 
+				this.nome.compareTo(((Municipality) object).getName()) == 0 &&
+				this.provincia.compareTo(((Municipality) object).getProvince()) == 0
+				)
+			return true;
+		else 
+			return false;
 	}
 	
 	@Override
 	public int hashCode(){
 		return this.getName().hashCode();
+	}
+	
+	public Municipality getReference(){
+		return this;
 	}
 }

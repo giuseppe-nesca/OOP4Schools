@@ -5,6 +5,7 @@ import it.polito.utility.LineUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,10 +13,16 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Supplier;
-
 import java.util.stream.*;
+import java.util.stream.Collectors.*;
+import java.util.stream.Collector.*;
+
+import javafx.css.PseudoClass;
 
 import javax.xml.bind.JAXBException;
 
@@ -24,9 +31,12 @@ import org.xml.sax.SAXException;
 import sun.swing.text.CountingPrintable;
 
 import com.sun.javafx.scene.control.skin.FXVK.Type;
+import com.sun.jmx.remote.util.OrderClassLoaders;
 import com.sun.org.apache.xerces.internal.impl.dtd.models.CMAny;
 import com.sun.org.glassfish.gmbal.Description;
+import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.bind.v2.runtime.reflect.ListIterator;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import jdk.nashorn.internal.runtime.Scope;
 
@@ -42,6 +52,7 @@ public class Region {
 	private Collection<Community> communities = new HashSet<Community>();
 	private Collection<Municipality> municipalities = new HashSet<Municipality>();
 	private Collection<School> schools = new HashSet<School>();
+	private Collection<Provincia> provinces = new HashSet<Provincia>();
 	
 	public Region(String name){
 		this.name = name;
@@ -65,6 +76,20 @@ public class Region {
 	
 	
 	// factory methods
+	
+	public Provincia newProvincia(String name){
+		Provincia provincia = new Provincia(name);
+		boolean flag = provinces.add(provincia);
+		if(flag)
+			return provincia;
+		else {
+			for(Provincia iter : provinces){
+				if (iter.equals(provincia)) return iter;
+			}
+		}
+		System.err.println("error con newProvinces: return null");
+		return null;
+	}
 	
 	// definisce una nuova comunità è la ritorna
 	public Community newCommunity(String name, Community.Type type){
@@ -197,27 +222,139 @@ public class Region {
 						Collectors.mapping(Municipality::getBranches, Collectors.counting()))); //conto ibranches dentro la municipality
 		return municipalityBranches;*/
 		Map<String,Long> municipalityBranches = new HashMap<String, Long>();
-				municipalities.forEach(s-> {
+		municipalities.forEach(s-> {
 			municipalityBranches.put(s.getName(),(long) s.getBranches().size());
 		});
 		return municipalityBranches;
 	}
 
 	public Map<String,Double>averageBranchesPerMunicipality(){
-		//Map<String,Long>municipalityBranchesAvarege = municipalities.stream()
-				
-		return null;
+		
+		//provinceName list
+		Set<String> provincesStrings = municipalities.stream()
+			.map(Municipality::getProvince)
+			.distinct()
+			.collect(Collectors.toSet());
+		
+		Set<Province> provinceSet = new HashSet<Region.Province>();
+		
+		provincesStrings.forEach(s -> {
+			provinceSet.add(new Province(s,municipalities));
+		});
+		
+		Map<String,Double>averageProv = new HashMap<String, Double>();
+		
+		provinceSet.forEach(s -> {
+			averageProv.put(s.name, s.average);
+		});
+		return averageProv;
 	}
 
 
 	public Collection<String> countSchoolsPerMunicipality(){
-		return null;
+		
+		Set<String> s = new HashSet<String>();
+		
+		Map<Municipality,Long> schoolNumSet = new HashMap<>();
+		
+		for (Municipality iter : municipalities) {
+			 long n = 
+				iter.getBranches().stream()
+					.map(Branch::getSchool)
+					.distinct()
+					.count();
+			schoolNumSet.put(iter, n);
+			String tmp = n + " " + iter.getName();
+			s.add(tmp);
+		}		
+		return s;
 	}
 	
 
 	public List<String> countSchoolsPerCommunity(){
-		return null;
+		
+		Set<String> s = new HashSet<String>();
+		Map<Community,Long> schoolNumMap = new HashMap<>();
+		Map<Community, Set<School>> goodSchools = new HashMap<>();
+		
+		for (Community community : communities) {
+			Set<School> schools = new HashSet<School>();
+			for (Municipality municipatiy : community.getMunicipalities()) {
+				Set<School> tmp = municipatiy.getBranches().stream()
+										.map(Branch::getSchool)
+										.distinct()
+										.collect(Collectors.toSet())
+										;
+				for (School school : tmp) {
+					schools.add(school);
+				};
+			}
+			goodSchools.put(community, schools);
+			schoolNumMap.put(community, (long) schools.size());
+			//String tmpS = schools.size() + " " + community.getName();
+			//s.add(tmpS);
+		}
+		
+		while (!schoolNumMap.isEmpty()) {
+			long max = Stream.of(schoolNumMap)
+						.flatMap(m -> m.values().stream())
+						.max(Comparator.naturalOrder()).get();
+			for (Community community : communities) {
+				
+				
+			}
+		}
+		
+		/*communities.stream()
+			.flatMap(c -> c.getMunicipalities().stream())
+			.flatMap(m -> m.getBranches().stream())
+			
+			.collect(Collectors.groupingBy())
+			;*/
+		
+		
+		
+		/*Set<Municipality> goodMuni = 
+				communities.stream()
+					.flatMap(c -> c.getMunicipalities().stream())
+					.distinct()
+					.collect(Collectors.toSet())
+			;
+		for (Municipality municipality : goodMuni) {
+			long n = 
+				municipality.getBranches().stream()
+					.map(Branch::getSchool)
+					.distinct()
+					.count();
+			schoolNumSet.put(municipality, n);
+			String tmp = n + " " + municipality.getName();
+			s.add(tmp);
+		}*/
+		
+		
+		return s;
 	}
 
+	class Province {
+		String name;
+		Set<Municipality> municipalities = new HashSet<>();
+		int municipalitiesNum = 0;
+		double average = 0;
+		
+		public Province( String name, Collection<Municipality> m ){
+			this.name = name;
+						
+			m.forEach(s -> {
+				if(s.getProvince().equals(name)){
+					municipalities.add(s);	
+				}
+			});
+			average = municipalities.stream()
+				.mapToInt(s-> s.getBranches().size())
+				.average().getAsDouble();
+			
+		}
+	}
+	
 	
 }
