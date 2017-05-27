@@ -32,11 +32,14 @@ import sun.swing.text.CountingPrintable;
 
 import com.sun.javafx.scene.control.skin.FXVK.Type;
 import com.sun.jmx.remote.util.OrderClassLoaders;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import com.sun.org.apache.xerces.internal.impl.dtd.models.CMAny;
 import com.sun.org.glassfish.gmbal.Description;
 import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.sun.xml.internal.bind.v2.runtime.reflect.ListIterator;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+//import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
+
 
 import jdk.nashorn.internal.runtime.Scope;
 
@@ -264,7 +267,7 @@ public class Region {
 					.distinct()
 					.count();
 			schoolNumSet.put(iter, n);
-			String tmp = n + " " + iter.getName();
+			String tmp = n + " - " + iter.getName();
 			s.add(tmp);
 		}		
 		return s;
@@ -273,11 +276,53 @@ public class Region {
 
 	public List<String> countSchoolsPerCommunity(){
 		
-		Set<String> s = new HashSet<String>();
-		Map<Community,Long> schoolNumMap = new HashMap<>();
+		Set<String> s = new TreeSet<String>(new Comparator<String>() {
+			@Override
+			public int compare (String s1, String s2){
+				Integer i1 = new Integer(new StringTokenizer(s1," - ").nextToken().toString());
+				Integer i2 = new Integer(new StringTokenizer(s2," - ").nextToken().toString());
+				return i1 - i2;
+			}
+		});
+		Map<Long,Community> schoolNumMap = new TreeMap<>(java.util.Collections.reverseOrder());
 		Map<Community, Set<School>> goodSchools = new HashMap<>();
+		Map<Community, List<Branch>> goodBranches;
 		
+		goodBranches = 
+		communities.stream()
+			.flatMap( c -> c.getMunicipalities().stream())
+			.distinct()
+			.flatMap( m -> m.getBranches().stream() )
+			.distinct()
+			.collect(Collectors.groupingBy( Branch::getCommunity))
+			/*.collect(Collectors.groupingBy(
+					 b -> {b.getMunicipality().getCommunity(); }
+					))*/
+			;
 		for (Community community : communities) {
+			List<School> listSchools = goodBranches.get(community).stream()
+											.map(Branch::getSchool)
+											.distinct()
+											.collect(Collectors.toList());
+			int sizeListSchools = listSchools.size();
+			String tmp = sizeListSchools + " - " + community.getName();
+			s.add(tmp);
+			
+		}
+		
+		/*while(!goodBranches.isEmpty()){
+			int maxL=0;
+			goodBranches.values().forEach(b -> {
+				if(b.size()>maxL){
+					maxL = b.size();
+				}
+			});
+			for (String string : s) {
+				
+			}
+		}*/
+		
+		/*fo r (Community community : communities) {
 			Set<School> schools = new HashSet<School>();
 			for (Municipality municipatiy : community.getMunicipalities()) {
 				Set<School> tmp = municipatiy.getBranches().stream()
@@ -288,14 +333,19 @@ public class Region {
 				for (School school : tmp) {
 					schools.add(school);
 				};
-			}
-			goodSchools.put(community, schools);
-			schoolNumMap.put(community, (long) schools.size());
+			}*/
+			
+			//goodSchools.put(community, schools);
+			//schoolNumMap.put(community, (long) schools.size());
 			//String tmpS = schools.size() + " " + community.getName();
 			//s.add(tmpS);
-		}
+		//}
 		
-		while (!schoolNumMap.isEmpty()) {
+		
+		
+		// 
+		
+	/*	while (!schoolNumMap.isEmpty()) {
 			long max = Stream.of(schoolNumMap)
 						.flatMap(m -> m.values().stream())
 						.max(Comparator.naturalOrder()).get();
@@ -304,7 +354,7 @@ public class Region {
 				
 			}
 		}
-		
+		*/
 		/*communities.stream()
 			.flatMap(c -> c.getMunicipalities().stream())
 			.flatMap(m -> m.getBranches().stream())
@@ -332,7 +382,7 @@ public class Region {
 		}*/
 		
 		
-		return s;
+		return s.stream().collect(Collectors.toList());
 	}
 
 	class Province {

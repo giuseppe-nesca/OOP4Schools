@@ -1,5 +1,7 @@
 package schools;
 
+import java.util.Optional;
+
 public class Branch {
 	
 	private int regionalCode;
@@ -35,6 +37,12 @@ public class Branch {
 
 	public School getSchool(){
 		return school;
+	}
+	
+	public Community getCommunity(){
+		
+		Optional<Community> communityOptional = this.getMunicipality().getCommunity();
+		return communityOptional.get();
 	}
 
 	@Override
